@@ -12,12 +12,15 @@
     "backend-server": "json-server --watch ./db/db.json --port 3001"
   },
   "dependencies": {
+    "@tanstack/vue-query": "^4.18.0",
+    "axios": "^1.2.0",
     "pinia": "^2.0.26",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
+    "@tanstack/eslint-plugin-query": "^4.15.1",
     "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.2.0",
     "@vue/eslint-config-prettier": "^7.0.0",
