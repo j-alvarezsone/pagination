@@ -1,21 +1,44 @@
 <script setup lang="ts">
-  import useClients from '../composables/useClients';
+  import { ref, watch, toRefs } from 'vue';
 
-  const { getPage, totalPageNumbers, currentPage, totalPages } = useClients();
+  interface Props {
+    currentPage: number;
+    totalPages: number;
+  }
+
+  interface Emits {
+    (event: 'pageChanged', page: number): void;
+  }
+
+  const props = defineProps<Props>();
+  const { currentPage, totalPages } = toRefs(props);
+
+  const emit = defineEmits<Emits>();
+
+  const totalPageNumbers = ref<number[]>([]);
+
+  watch(
+    () => totalPages,
+
+    () => {
+      totalPageNumbers.value = [...new Array(totalPages.value)].map((v, i) => i + 1);
+    },
+    { immediate: true },
+  );
 </script>
 
 <template>
   <div>
-    <button :disabled="currentPage === 1" @click="getPage(currentPage - 1)">Previews</button>
+    <button :disabled="currentPage === 1" @click="emit('pageChanged', currentPage - 1)">Previews</button>
     <button
       v-for="number of totalPageNumbers"
       :key="number"
       :class="{ active: currentPage === number }"
-      @click="getPage(number)"
+      @click="emit('pageChanged', number)"
     >
       {{ number }}
     </button>
-    <button :disabled="currentPage === totalPages" @click="getPage(currentPage + 1)">Next</button>
+    <button :disabled="currentPage === totalPages" @click="emit('pageChanged', currentPage + 1)">Next</button>
   </div>
 </template>
 

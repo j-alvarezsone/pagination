@@ -43,7 +43,6 @@ const useClients = () => {
     isLoading,
     totalPages,
     // Getters
-    totalPageNumbers: computed(() => [...new Array(totalPages.value)].map((v, i) => i + 1)),
     // Actions
     getPage(page: number) {
       store.setPage(page);

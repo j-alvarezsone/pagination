@@ -1,7 +1,11 @@
 <script setup lang="ts">
-  import useClients from '../composables/useClients';
+  import type { Client } from '../interfaces/client';
 
-  const { clients } = useClients();
+  interface Props {
+    clients: Client[];
+  }
+
+  defineProps<Props>();
 </script>
 
 <template>
