@@ -1,22 +1,23 @@
 <script setup lang="ts">
-  import { useMutation } from '@tanstack/vue-query';
-  import { useRoute } from 'vue-router';
+  import { watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import LoadingModal from '../../shared/components/LoadingModal.vue';
   import useClient from '../composables/useClient';
-  import type { Client } from '../interfaces/client';
-  import clientsApi from '../../api/clients-api';
-  import { watch } from 'vue';
 
   const route = useRoute();
-  const { client, isLoading } = useClient(+route.params.id);
+  const router = useRouter();
 
-  const updateClient = async (client: Client): Promise<Client> => {
-    const { data } = await clientsApi.patch<Client>(`/clients/${client.id}`, client);
+  const { client, isLoading, isError, clientMutation, updateClient, isUpdating, isErrorUpdating, isUpdateSuccess } =
+    useClient(+route.params.id);
 
-    return data;
-  };
-
-  const clientMutation = useMutation(updateClient);
+  watch(
+    () => isErrorUpdating.value,
+    () => {
+      if (isError.value) {
+        router.replace('/clients');
+      }
+    },
+  );
 
   watch(
     () => clientMutation.isSuccess.value,
@@ -32,19 +33,19 @@
 
 <template>
   <div>
-    <h3 v-if="clientMutation.isLoading.value">Saving....</h3>
-    <h3 v-if="clientMutation.isSuccess.value">Saved</h3>
+    <h3 v-if="isUpdating">Saving....</h3>
+    <h3 v-if="isUpdateSuccess">Saved</h3>
     <LoadingModal v-if="isLoading" />
 
     <div v-if="client">
       <h1>{{ client.name }}</h1>
 
-      <form @submit.prevent="clientMutation.mutate(client!)">
+      <form @submit.prevent="updateClient(client!)">
         <input type="text" placeholder="Name" v-model="client.name" />
         <input type="text" placeholder="Address" v-model="client.address" />
         <br />
 
-        <button type="submit" :disabled="clientMutation.isLoading.value">Save</button>
+        <button type="submit" :disabled="isUpdating">Save</button>
       </form>
     </div>
 

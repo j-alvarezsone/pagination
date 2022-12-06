@@ -1,4 +1,4 @@
-import { watch, computed } from 'vue';
+import { watch } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
 import { useClientsStore } from '../../store/clients';
@@ -6,11 +6,13 @@ import { useClientsStore } from '../../store/clients';
 import clientsApi from '../../api/clients-api';
 import type { Client } from '../interfaces/client';
 
+// const queryClient = useQueryClient();
+
 const getClients = async (page: number): Promise<Client[]> => {
   // await new Promise((resolve) => {
   //   setTimeout(() => {
   //     resolve(true);
-  //   }, 1500);
+  //   }, 2500);
   // });
 
   const { data } = await clientsApi.get<Client[]>(`/clients?_page=${page}`);
@@ -35,6 +37,7 @@ const useClients = () => {
         store.setClients(clients);
       }
     },
+    { immediate: true },
   );
 
   return {
